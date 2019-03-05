@@ -7,6 +7,7 @@ public class Crime {
     private UUID mId;
     private String mTitle;
     private Date mDate;
+    private String mSuspect;
     private boolean mSolved;
 
     public Crime(){
@@ -16,6 +17,14 @@ public class Crime {
     public Crime(UUID id){
         mId = id;
         mDate = new Date();
+    }
+
+    public String getSuspect() {
+        return mSuspect;
+    }
+
+    public void setSuspect(String suspect) {
+        mSuspect = suspect;
     }
 
     public UUID getId() {

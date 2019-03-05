@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
@@ -28,9 +29,12 @@ public class CrimeFragment extends Fragment {
     private static final String DIALO_GDATE = "DialogDate";
     private static final String ARG_CRIME_ID = "crime_id";
     private static final int REQUEST_DATE = 0;
+    private static final int REQUEST_CONTACT = 1;
     private Crime mCrime;
     private EditText mTitleCrimeEditText;
     private Button mDateButton;
+    private Button mReportButton;
+    private Button mSuspectButton;
 
     private CheckBox mSolvedCheckBox;
 
@@ -71,6 +75,26 @@ public class CrimeFragment extends Fragment {
 
     private void updateDate() {
         mDateButton.setText(DateFormat.getDateInstance(DateFormat.FULL).format(mCrime.getDate()));
+    }
+
+    private String getCrimeReport() {
+        String solvedString = null;
+        if (mCrime.isSolved()) {
+            solvedString = getString(R.string.crime_report_solved);
+        } else {
+            solvedString = getString(R.string.crime_report_unsolved);
+        }
+        String dateFormat = "EEE, MMM dd";
+        String dateString = DateFormat.getDateInstance(DateFormat.FULL).format(mCrime.getDate());
+        String suspect = mCrime.getSuspect();
+        if (suspect == null) {
+            suspect = getString(R.string.crime_report_no_suspect);
+        } else {
+            suspect = getString(R.string.crime_report_suspect, suspect);
+        }
+        String report = getString(R.string.crime_report,
+                mCrime.getTitle(), dateString, solvedString, suspect);
+        return report;
     }
 
     @Nullable
@@ -118,6 +142,19 @@ public class CrimeFragment extends Fragment {
             }
         });
 
+        mReportButton = v.findViewById(R.id.crime_report_button);
+        mReportButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(Intent.ACTION_SEND);
+                i.setType("text/plain");
+                i.putExtra(Intent.EXTRA_TEXT,getCrimeReport());
+                i.putExtra(Intent.EXTRA_SUBJECT,
+                        getString(R.string.crime_report_subject));
+                i = Intent.createChooser(i, getString(R.string.send_report));
+                startActivity(i);
+            }
+        });
 
 
 
